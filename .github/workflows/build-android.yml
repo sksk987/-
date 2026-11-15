@@ -10,7 +10,7 @@ on:
       - '.github/workflows/build-android.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,3 +36,9 @@ jobs:
           name: SiataVoice-Android-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
+      - name: Publish direct-download APK to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk siata-voice.apk
+          gh release create v1.0.0 siata-voice.apk --title "קריינית סיעתא 1.0.0" --notes "אפליקציית אנדרואיד בעברית לקריינות באמצעות Google Gemini. גרסת מעטפת הדורשת חיבור לאינטרנט ומפתח API משלך." --target "$GITHUB_SHA"
