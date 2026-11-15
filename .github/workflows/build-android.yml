@@ -24,7 +24,11 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Install Android SDK
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+        run: |
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> "$GITHUB_ENV"
+          SDKMGR=$(find /usr/local/lib/android/sdk/cmdline-tools -type f -name sdkmanager | head -n 1)
+          yes | "$SDKMGR" --licenses >/dev/null || true
+          "$SDKMGR" "platforms;android-35" "build-tools;35.0.0"
       - name: Assemble APK
         run: gradle :app:assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
